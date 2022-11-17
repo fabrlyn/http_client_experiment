@@ -1,7 +1,4 @@
-use http_client_experiment::{
-    api::ApiClient,
-    api_model::{RequestCredentials, RoomPostRequest},
-};
+use http_client_experiment::api2::{ApiClient, RequestCredentials, RoomPostRequest};
 
 fn main() {
     let client = reqwest::blocking::Client::new();
@@ -14,5 +11,5 @@ fn main() {
         name: "Room-1".to_string(),
     };
 
-    let _response = client.api_execute(request).unwrap();
+    let response = client.api_execute(request);
 }
