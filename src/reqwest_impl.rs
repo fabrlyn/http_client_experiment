@@ -1,7 +1,8 @@
 use reqwest::blocking::Client;
 
 use crate::{
-    api2::{self, ApiClient, Error, Unpack, WithResponse},
+    api::{ApiClient, ApiRequest, Unpack},
+    api_model::{self, Error},
     http::{HttpClient, Method, Request, Response},
 };
 
@@ -28,16 +29,18 @@ impl HttpClient for Client {
 }
 
 impl ApiClient for Client {
-    type Error = api2::Error<reqwest::Error>;
+    type Error = api_model::Error<reqwest::Error>;
+    type ToPack = Request;
+    type ToUnpack = Response;
 
     fn api_execute<R>(
         &self,
         request: R,
-    ) -> Result<<R as WithResponse<Self::Error>>::Response, Self::Error>
+    ) -> Result<<R as ApiRequest<Self::ToPack, Self::ToUnpack, Self::Error>>::Response, Self::Error>
     where
-        R: WithResponse<Self::Error>,
+        R: ApiRequest<Self::ToPack, Self::ToUnpack, api_model::Error<reqwest::Error>>,
     {
         let response = self.http_execute(request.pack()?).map_err(Error::Http)?;
-        <R as WithResponse<Self::Error>>::Response::unpack(response)
+        <R as ApiRequest<Self::ToPack, Self::ToUnpack, Self::Error>>::Response::unpack(response)
     }
 }

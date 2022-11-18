@@ -3,8 +3,8 @@ use std::collections::HashMap;
 use serde::Deserialize;
 
 use crate::{
-    api::{ApiResult, ClientError, Error, Pack, Unpack, WithResponse},
-    http::{Method, Request, Response},
+    api::{ApiRequest, Pack, Unpack},
+    http::{Method, Request, Response, StatusCode},
 };
 
 // Model
@@ -24,10 +24,44 @@ pub struct RoomPostResponse {
     pub id: String,
 }
 
+#[derive(Debug, Deserialize)]
+pub struct ApiError {
+    pub description: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct ApiErrorResponse {
+    pub errors: Vec<ApiError>,
+}
+
+#[derive(Deserialize)]
+pub struct ApiResponse<T> {
+    pub errors: Vec<ApiError>,
+    pub data: T,
+}
+
+#[derive(Debug)]
+pub enum ClientError {
+    ExpectedBody,
+}
+
+#[derive(Debug)]
+pub enum Error<E> {
+    Hue(ApiErrorResponse),
+    Io(std::io::Error),
+    Client(ClientError),
+    Http(E),
+}
+
+pub enum ApiResult<T> {
+    Ok(ApiResponse<T>),
+    Err(StatusCode, ApiErrorResponse),
+}
+
 // Behaviour
 
-impl Pack<Request> for RoomPostRequest {
-    fn pack<E>(self) -> Result<Request, Error<E>> {
+impl<E> Pack<Request, Error<E>> for RoomPostRequest {
+    fn pack(self) -> Result<Request, Error<E>> {
         let url = format!("{}/resource/room", self.credentials.base_url);
 
         let mut headers = HashMap::<String, String>::new();
@@ -47,12 +81,8 @@ impl Pack<Request> for RoomPostRequest {
     }
 }
 
-impl WithResponse for RoomPostRequest {
-    type Response = ApiResult<RoomPostResponse>;
-}
-
-impl Unpack<Response> for ApiResult<RoomPostResponse> {
-    fn unpack<E>(value: Response) -> Result<Self, Error<E>> {
+impl<E> Unpack<Response, Error<E>> for ApiResult<RoomPostResponse> {
+    fn unpack(value: Response) -> Result<Self, Error<E>> {
         if value.status_code != 200 {
             let body = value.body.ok_or(Error::Client(ClientError::ExpectedBody))?;
 
@@ -71,4 +101,12 @@ impl Unpack<Response> for ApiResult<RoomPostResponse> {
             Ok(ApiResult::Ok(body))
         }
     }
+}
+
+impl<A, B, E> ApiRequest<A, B, Error<E>> for RoomPostRequest
+where
+    RoomPostRequest: Pack<A, Error<E>>,
+    ApiResult<RoomPostResponse>: Unpack<B, Error<E>>,
+{
+    type Response = ApiResult<RoomPostResponse>;
 }
