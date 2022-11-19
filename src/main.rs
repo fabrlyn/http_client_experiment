@@ -5,6 +5,7 @@ use http_client_experiment::{
     api_model::{ApiResult, RequestCredentials, RoomGetRequest, RoomGetResponse, RoomPostRequest},
     http_api::ApiHttpClient,
     mock_impl::MockClient,
+    ureq_impl::Ureq,
 };
 
 pub trait AbstractRequest<A>:
@@ -61,14 +62,12 @@ fn execute_room_flow<A: ApiHttpClient<E>, E: Debug>(client: A) {
 }
 
 fn main() {
-    //let client = reqwest::blocking::Client::new();
-
-    let client = MockClient {};
+    let client = Ureq {};
     execute_room_flow(client);
 
     let client = MockClient {};
     something_else(client);
 
-    let client = MockClient {};
+    let client = reqwest::blocking::Client::new();
     something_else_more_specfic(client);
 }
