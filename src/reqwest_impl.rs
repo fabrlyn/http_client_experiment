@@ -1,6 +1,8 @@
+use reqwest::blocking::Client;
+
 use crate::http::{HttpClient, Method, Request, Response};
 
-impl HttpClient for reqwest::blocking::Client {
+impl HttpClient for Client {
     type Error = reqwest::Error;
 
     fn http_execute(&self, request: Request) -> Result<Response, Self::Error> {

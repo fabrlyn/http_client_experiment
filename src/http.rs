@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, fmt::Debug};
 
 // Model
 
@@ -28,7 +28,7 @@ pub struct Response {
 // Behaviour
 
 pub trait HttpClient {
-    type Error;
+    type Error: Debug;
 
     fn http_execute(&self, request: Request) -> Result<Response, Self::Error>;
 }

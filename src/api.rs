@@ -1,95 +1,38 @@
-use serde::Deserialize;
+use std::fmt::Debug;
 
-use crate::http::{HttpClient, Request, Response, StatusCode};
-
-// Model
-
-#[derive(Debug, Deserialize)]
-pub struct ApiError {
-    pub description: String,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct ApiErrorResponse {
-    pub errors: Vec<ApiError>,
-}
-
-#[derive(Deserialize)]
-pub struct ApiResponse<T> {
-    pub errors: Vec<ApiError>,
-    pub data: T,
-}
-
-#[derive(Debug)]
-pub enum ClientError {
-    ExpectedBody,
-}
-
-#[derive(Debug)]
-pub enum Error<E> {
-    Hue(ApiErrorResponse),
-    Io(std::io::Error),
-    Client(ClientError),
-    Http(E),
-}
-
-pub enum ApiResult<T> {
-    Ok(ApiResponse<T>),
-    Err(StatusCode, ApiErrorResponse),
-}
-
-// Behaviour
-
-pub trait Pack<V>: Sized {
-    fn pack<E>(self) -> Result<V, Error<E>>;
-}
-
-pub trait Unpack<V>: Sized {
-    fn unpack<E>(value: V) -> Result<Self, Error<E>>;
-}
-
-pub trait WithResponse: Pack<Request> {
-    type Response: Unpack<Response>;
-}
-
-pub trait ApiRequest: Pack<Request> + WithResponse
+pub trait Pack<V, E>
 where
-    <Self as WithResponse>::Response: Unpack<Response>,
+    E: Debug,
 {
+    fn pack(self) -> Result<V, E>;
 }
 
-impl<T> ApiRequest for T
+pub trait Unpack<V, E>: Sized
 where
-    T: Pack<Request> + WithResponse,
-    <Self as WithResponse>::Response: Unpack<Response>,
+    E: Debug,
 {
+    fn unpack(value: V) -> Result<Self, E>;
 }
+
+pub trait Request<A, B, E>: Pack<A, E>
+where
+    E: Debug,
+{
+    type Response: Unpack<B, E> + Debug;
+}
+
+pub type Response<A, R> = <R as Request<
+    <A as ApiClient>::ToPack,
+    <A as ApiClient>::ToUnpack,
+    <A as ApiClient>::Error,
+>>::Response;
 
 pub trait ApiClient {
-    type Error;
+    type Error: Debug;
+    type ToPack;
+    type ToUnpack;
 
-    fn api_execute<R>(
-        &self,
-        request: R,
-    ) -> Result<<R as WithResponse>::Response, Error<Self::Error>>
+    fn api_execute<R>(&self, request: R) -> Result<Response<Self, R>, Self::Error>
     where
-        R: ApiRequest;
-}
-
-impl<T> ApiClient for T
-where
-    T: HttpClient,
-{
-    type Error = <T as HttpClient>::Error;
-
-    fn api_execute<R>(
-        &self,
-        request: R,
-    ) -> Result<<R as WithResponse>::Response, Error<Self::Error>>
-    where
-        R: ApiRequest,
-    {
-        let response = self.http_execute(request.pack()?).map_err(Error::Http)?;
-        <R as WithResponse>::Response::unpack(response)
-    }
+        R: Request<Self::ToPack, Self::ToUnpack, Self::Error>;
 }
