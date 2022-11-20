@@ -5,7 +5,7 @@ use crate::{
         r#async::{AsyncApiClient, AsyncResponse},
         Request, Unpack,
     },
-    http::{self, r#async::AsyncHttpClient},
+    http::{self, asyn::Client},
 };
 
 use super::Error;
@@ -13,9 +13,9 @@ use super::Error;
 #[async_trait]
 impl<T> AsyncApiClient for T
 where
-    T: AsyncHttpClient + Sync,
+    T: Client + Sync,
 {
-    type Error = Error<<T as AsyncHttpClient>::Error>;
+    type Error = Error<<T as Client>::Error>;
     type ToPack = http::Request;
     type ToUnpack = http::Response;
 

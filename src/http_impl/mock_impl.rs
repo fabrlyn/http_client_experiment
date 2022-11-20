@@ -1,10 +1,10 @@
 use serde_json::json;
 
-use crate::http::{sync::HttpClient, Request, Response};
+use crate::http::{syn::Client, Request, Response};
 
 pub struct MockClient {}
 
-impl HttpClient for MockClient {
+impl Client for MockClient {
     type Error = String;
 
     fn http_execute(&self, _request: Request) -> Result<Response, Self::Error> {

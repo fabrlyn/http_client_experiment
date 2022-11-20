@@ -3,16 +3,16 @@ use crate::{
         sync::{ApiClient, Response},
         Request, Unpack,
     },
-    http::{self, sync::HttpClient},
+    http::{self, syn::Client},
 };
 
 use super::Error;
 
 impl<T> ApiClient for T
 where
-    T: HttpClient,
+    T: Client,
 {
-    type Error = Error<<T as HttpClient>::Error>;
+    type Error = Error<<T as Client>::Error>;
     type ToPack = http::Request;
     type ToUnpack = http::Response;
 

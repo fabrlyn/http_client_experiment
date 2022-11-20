@@ -1,10 +1,10 @@
 use std::io::Cursor;
 
-use crate::http::{sync::HttpClient, Method, Request, Response};
+use crate::http::{syn::Client, Method, Request, Response};
 
 pub struct Ureq;
 
-impl HttpClient for Ureq {
+impl Client for Ureq {
     type Error = ureq::Error;
 
     fn http_execute(&self, request: Request) -> Result<Response, Self::Error> {

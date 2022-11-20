@@ -1,9 +1,9 @@
 use async_trait::async_trait;
 use reqwest::blocking::Client;
 
-use crate::http::{r#async::AsyncHttpClient, sync::HttpClient, Method, Request, Response};
+use crate::http::{asyn, syn, Method, Request, Response};
 
-impl HttpClient for Client {
+impl syn::Client for Client {
     type Error = reqwest::Error;
 
     fn http_execute(&self, request: Request) -> Result<Response, Self::Error> {
@@ -26,7 +26,7 @@ impl HttpClient for Client {
 }
 
 #[async_trait]
-impl AsyncHttpClient for reqwest::Client {
+impl asyn::Client for reqwest::Client {
     type Error = reqwest::Error;
 
     async fn http_execute(&self, request: Request) -> Result<Response, Self::Error> {

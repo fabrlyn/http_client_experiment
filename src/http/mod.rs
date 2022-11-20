@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
-pub mod r#async;
-pub mod sync;
+pub mod asyn;
+pub mod syn;
 
 pub type StatusCode = u16;
 
