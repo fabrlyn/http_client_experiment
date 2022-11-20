@@ -1,5 +1,5 @@
-pub mod r#async;
-pub mod sync;
+pub mod asyn;
+pub mod syn;
 
 use std::fmt::Debug;
 

@@ -1,14 +1,14 @@
 use async_trait::async_trait;
 
 use crate::{
-    api::{self, r#async::Response, Request, Unpack},
-    http::{self},
+    api::{self, asyn::Response, Request, Unpack},
+    http,
 };
 
 use super::Error;
 
 #[async_trait]
-impl<T> api::r#async::Client for T
+impl<T> api::asyn::Client for T
 where
     T: http::asyn::Client + Sync,
 {
@@ -29,11 +29,11 @@ where
 }
 
 pub trait ApiHttpClient<E>:
-    api::r#async::Client<ToPack = http::Request, ToUnpack = http::Response, Error = Error<E>>
+    api::asyn::Client<ToPack = http::Request, ToUnpack = http::Response, Error = Error<E>>
 {
 }
 
 impl<T, E> ApiHttpClient<E> for T where
-    T: api::r#async::Client<ToPack = http::Request, ToUnpack = http::Response, Error = Error<E>>
+    T: api::asyn::Client<ToPack = http::Request, ToUnpack = http::Response, Error = Error<E>>
 {
 }

@@ -1,11 +1,11 @@
 use crate::{
-    api::{self, sync::Response, Request, Unpack},
+    api::{self, syn::Response, Request, Unpack},
     http,
 };
 
 use super::Error;
 
-impl<T> api::sync::Client for T
+impl<T> api::syn::Client for T
 where
     T: http::syn::Client,
 {
@@ -23,11 +23,11 @@ where
 }
 
 pub trait ApiHttpClient<E>:
-    api::sync::Client<ToPack = http::Request, ToUnpack = http::Response, Error = Error<E>>
+    api::syn::Client<ToPack = http::Request, ToUnpack = http::Response, Error = Error<E>>
 {
 }
 
 impl<T, E> ApiHttpClient<E> for T where
-    T: api::sync::Client<ToPack = http::Request, ToUnpack = http::Response, Error = Error<E>>
+    T: api::syn::Client<ToPack = http::Request, ToUnpack = http::Response, Error = Error<E>>
 {
 }
