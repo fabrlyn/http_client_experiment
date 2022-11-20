@@ -1,11 +1,14 @@
 use async_trait::async_trait;
 
 use crate::{
-    api::{Request, Unpack},
-    api_model::Error,
-    async_api::{AsyncApiClient, AsyncResponse},
+    api::{
+        r#async::{AsyncApiClient, AsyncResponse},
+        Request, Unpack,
+    },
     http::{self, r#async::AsyncHttpClient},
 };
+
+use super::Error;
 
 #[async_trait]
 impl<T> AsyncApiClient for T

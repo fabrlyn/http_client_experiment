@@ -1,10 +1,17 @@
 use std::fmt::Debug;
 
 use http_client_experiment::{
-    api::{AbstractRequest, ApiClient},
-    api_model::{ApiResult, RequestCredentials, RoomGetRequest, RoomGetResponse, RoomPostRequest},
-    async_api::AsyncApiClient,
-    http_api::ApiHttpClient,
+    api::{
+        r#async::AsyncApiClient,
+        sync::{AbstractRequest, ApiClient},
+    },
+    domain::{
+        room_get::{RoomGetRequest, RoomGetResponse},
+        room_post::RoomPostRequest,
+        sync_client::ApiHttpClient,
+        ApiResult, RequestCredentials,
+    },
+    http_impl::{mock_impl::MockClient, ureq_impl::Ureq},
 };
 
 fn something_else_more_specfic<A: ApiClient>(client: A)

@@ -1,8 +1,12 @@
 use crate::{
-    api::{self, ApiClient, Request, Unpack},
-    api_model::Error,
+    api::{
+        sync::{ApiClient, Response},
+        Request, Unpack,
+    },
     http::{self, sync::HttpClient},
 };
+
+use super::Error;
 
 impl<T> ApiClient for T
 where
@@ -12,7 +16,7 @@ where
     type ToPack = http::Request;
     type ToUnpack = http::Response;
 
-    fn api_execute<R>(&self, request: R) -> Result<api::Response<Self, R>, Self::Error>
+    fn api_execute<R>(&self, request: R) -> Result<Response<Self, R>, Self::Error>
     where
         R: Request<Self::ToPack, Self::ToUnpack, Self::Error>,
     {
