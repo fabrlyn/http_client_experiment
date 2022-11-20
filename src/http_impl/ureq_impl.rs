@@ -1,6 +1,6 @@
 use std::io::Cursor;
 
-use crate::http::{HttpClient, Method, Request, Response};
+use crate::http::{sync::HttpClient, Method, Request, Response};
 
 pub struct Ureq;
 

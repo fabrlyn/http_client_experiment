@@ -1,7 +1,7 @@
 use crate::{
     api::{self, ApiClient, Request, Unpack},
     api_model::Error,
-    http::{self, HttpClient},
+    http::{self, sync::HttpClient},
 };
 
 impl<T> ApiClient for T

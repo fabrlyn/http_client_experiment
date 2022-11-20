@@ -4,7 +4,7 @@ use crate::{
     api::{Request, Unpack},
     api_model::Error,
     async_api::{AsyncApiClient, AsyncResponse},
-    http::{self, AsyncHttpClient},
+    http::{self, r#async::AsyncHttpClient},
 };
 
 #[async_trait]

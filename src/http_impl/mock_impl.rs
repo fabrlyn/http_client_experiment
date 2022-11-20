@@ -1,6 +1,6 @@
 use serde_json::json;
 
-use crate::http::{HttpClient, Request, Response};
+use crate::http::{sync::HttpClient, Request, Response};
 
 pub struct MockClient {}
 

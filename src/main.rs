@@ -5,8 +5,6 @@ use http_client_experiment::{
     api_model::{ApiResult, RequestCredentials, RoomGetRequest, RoomGetResponse, RoomPostRequest},
     async_api::AsyncApiClient,
     http_api::ApiHttpClient,
-    mock_impl::MockClient,
-    ureq_impl::Ureq,
 };
 
 fn something_else_more_specfic<A: ApiClient>(client: A)
