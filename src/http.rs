@@ -1,5 +1,7 @@
 use std::{collections::HashMap, fmt::Debug};
 
+use async_trait::async_trait;
+
 // Model
 
 pub type StatusCode = u16;
@@ -31,4 +33,11 @@ pub trait HttpClient {
     type Error: Debug;
 
     fn http_execute(&self, request: Request) -> Result<Response, Self::Error>;
+}
+
+#[async_trait]
+pub trait AsyncHttpClient {
+    type Error: Debug + Send;
+
+    async fn http_execute(&self, request: Request) -> Result<Response, Self::Error>;
 }

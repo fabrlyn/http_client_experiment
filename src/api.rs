@@ -36,3 +36,17 @@ pub trait ApiClient {
     where
         R: Request<Self::ToPack, Self::ToUnpack, Self::Error>;
 }
+
+pub trait AbstractRequest<A>:
+    Request<<A as ApiClient>::ToPack, <A as ApiClient>::ToUnpack, <A as ApiClient>::Error>
+where
+    A: ApiClient,
+{
+}
+
+impl<T, A> AbstractRequest<A> for T
+where
+    A: ApiClient,
+    T: Request<<A as ApiClient>::ToPack, <A as ApiClient>::ToUnpack, <A as ApiClient>::Error>,
+{
+}

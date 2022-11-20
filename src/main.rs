@@ -1,26 +1,13 @@
 use std::fmt::Debug;
 
 use http_client_experiment::{
-    api::{self, ApiClient},
+    api::{AbstractRequest, ApiClient},
     api_model::{ApiResult, RequestCredentials, RoomGetRequest, RoomGetResponse, RoomPostRequest},
+    async_api::AsyncApiClient,
     http_api::ApiHttpClient,
     mock_impl::MockClient,
     ureq_impl::Ureq,
 };
-
-pub trait AbstractRequest<A>:
-    api::Request<<A as ApiClient>::ToPack, <A as ApiClient>::ToUnpack, <A as ApiClient>::Error>
-where
-    A: ApiClient,
-{
-}
-
-impl<T, A> AbstractRequest<A> for T
-where
-    A: ApiClient,
-    T: api::Request<<A as ApiClient>::ToPack, <A as ApiClient>::ToUnpack, <A as ApiClient>::Error>,
-{
-}
 
 fn something_else_more_specfic<A: ApiClient>(client: A)
 where
@@ -61,6 +48,7 @@ fn execute_room_flow<A: ApiHttpClient<E>, E: Debug>(client: A) {
     create_room(&client);
 }
 
+/*
 fn main() {
     let client = Ureq {};
     execute_room_flow(client);
@@ -70,4 +58,13 @@ fn main() {
 
     let client = reqwest::blocking::Client::new();
     something_else_more_specfic(client);
+}
+*/
+
+#[tokio::main]
+async fn main() {
+    let client = reqwest::Client::new();
+
+    let response = client.api_execute(RoomGetRequest).await;
+    println!("{response:?}");
 }
