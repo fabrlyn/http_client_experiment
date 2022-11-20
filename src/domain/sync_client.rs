@@ -22,12 +22,12 @@ where
     }
 }
 
-pub trait ApiHttpClient<E>:
+pub trait Client<E>:
     api::syn::Client<ToPack = http::Request, ToUnpack = http::Response, Error = Error<E>>
 {
 }
 
-impl<T, E> ApiHttpClient<E> for T where
+impl<T, E> Client<E> for T where
     T: api::syn::Client<ToPack = http::Request, ToUnpack = http::Response, Error = Error<E>>
 {
 }

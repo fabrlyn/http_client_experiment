@@ -1,24 +1,14 @@
 use std::fmt::Debug;
 
-use http_client_experiment::{
-    api::{
-        self,
-        asyn::Client,
-        syn::{self, AbstractRequest},
-        Request,
-    },
-    domain::{
-        self,
-        room_get::{RoomGetRequest, RoomGetResponse},
-        room_post::RoomPostRequest,
-        sync_client::ApiHttpClient,
-        ApiResult, Error, RequestCredentials,
-    },
-    http::{self, Response},
-    http_impl::{mock_impl::MockClient, ureq_impl::Ureq},
+use http_client_experiment::domain::{
+    room_get::{RoomGetRequest, RoomGetResponse},
+    room_post::RoomPostRequest,
+    sync_client::Client,
+    ApiResult, Error, RequestCredentials,
 };
 use reqwest::blocking::ClientBuilder;
 
+/*
 fn something_else_more_specfic<A: syn::Client>(client: A)
 where
     RoomGetRequest: AbstractRequest<A, Response = ApiResult<RoomGetResponse>>,
@@ -28,7 +18,9 @@ where
     println!("{response:?}");
     */
 }
+*/
 
+/*
 fn something_else<A: syn::Client>(client: A)
 where
     RoomGetRequest: AbstractRequest<A>,
@@ -38,15 +30,16 @@ where
     println!("{response:?}");
     */
 }
+*/
 
-fn get_room<A: ApiHttpClient<E>, E: Debug>(client: &A) {
+fn get_room<A: Client<E>, E: Debug>(client: &A) {
     /*
     let response = client.api_execute(RoomGetRequest {});
     println!("{response:?}");
     */
 }
 
-fn create_room<A: ApiHttpClient<E>, E: Debug>(client: &A) {
+fn create_room<A: Client<E>, E: Debug>(client: &A) {
     let request = RoomPostRequest {
         credentials: RequestCredentials {
             base_url: "http://localhost:1233".to_string(),
@@ -59,14 +52,14 @@ fn create_room<A: ApiHttpClient<E>, E: Debug>(client: &A) {
     println!("{response:?}");
 }
 
-fn execute_room_flow<A: ApiHttpClient<E>, E: Debug>(client: A) {
+fn execute_room_flow<A: Client<E>, E: Debug>(client: A) {
     get_room(&client);
     create_room(&client);
 }
 
 fn get_rooms<A, E>(client: &A) -> Result<ApiResult<Vec<RoomGetResponse>>, Error<E>>
 where
-    A: ApiHttpClient<E>,
+    A: Client<E>,
     E: Debug,
 {
     client.api_execute(RoomGetRequest {
