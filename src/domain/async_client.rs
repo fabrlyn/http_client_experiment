@@ -1,25 +1,22 @@
 use async_trait::async_trait;
 
 use crate::{
-    api::{
-        r#async::{AsyncApiClient, AsyncResponse},
-        Request, Unpack,
-    },
-    http::{self, asyn::Client},
+    api::{self, r#async::Response, Request, Unpack},
+    http::{self},
 };
 
 use super::Error;
 
 #[async_trait]
-impl<T> AsyncApiClient for T
+impl<T> api::r#async::Client for T
 where
-    T: Client + Sync,
+    T: http::asyn::Client + Sync,
 {
-    type Error = Error<<T as Client>::Error>;
+    type Error = Error<<T as http::asyn::Client>::Error>;
     type ToPack = http::Request;
     type ToUnpack = http::Response;
 
-    async fn api_execute<R>(&self, request: R) -> Result<AsyncResponse<Self, R>, Self::Error>
+    async fn api_execute<R>(&self, request: R) -> Result<Response<Self, R>, Self::Error>
     where
         R: Request<Self::ToPack, Self::ToUnpack, Self::Error> + Send,
     {
@@ -32,11 +29,11 @@ where
 }
 
 pub trait ApiHttpClient<E>:
-    AsyncApiClient<ToPack = http::Request, ToUnpack = http::Response, Error = Error<E>>
+    api::r#async::Client<ToPack = http::Request, ToUnpack = http::Response, Error = Error<E>>
 {
 }
 
 impl<T, E> ApiHttpClient<E> for T where
-    T: AsyncApiClient<ToPack = http::Request, ToUnpack = http::Response, Error = Error<E>>
+    T: api::r#async::Client<ToPack = http::Request, ToUnpack = http::Response, Error = Error<E>>
 {
 }

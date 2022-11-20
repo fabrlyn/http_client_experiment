@@ -2,8 +2,8 @@ use std::fmt::Debug;
 
 use http_client_experiment::{
     api::{
-        r#async::AsyncApiClient,
-        sync::{AbstractRequest, ApiClient},
+        r#async::Client,
+        sync::{self, AbstractRequest},
     },
     domain::{
         room_get::{RoomGetRequest, RoomGetResponse},
@@ -14,7 +14,7 @@ use http_client_experiment::{
     http_impl::{mock_impl::MockClient, ureq_impl::Ureq},
 };
 
-fn something_else_more_specfic<A: ApiClient>(client: A)
+fn something_else_more_specfic<A: sync::Client>(client: A)
 where
     RoomGetRequest: AbstractRequest<A, Response = ApiResult<RoomGetResponse>>,
 {
@@ -22,7 +22,7 @@ where
     println!("{response:?}");
 }
 
-fn something_else<A: ApiClient>(client: A)
+fn something_else<A: sync::Client>(client: A)
 where
     RoomGetRequest: AbstractRequest<A>,
 {

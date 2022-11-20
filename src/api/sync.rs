@@ -3,12 +3,12 @@ use std::fmt::Debug;
 use super::Request;
 
 pub type Response<A, R> = <R as Request<
-    <A as ApiClient>::ToPack,
-    <A as ApiClient>::ToUnpack,
-    <A as ApiClient>::Error,
+    <A as Client>::ToPack,
+    <A as Client>::ToUnpack,
+    <A as Client>::Error,
 >>::Response;
 
-pub trait ApiClient {
+pub trait Client {
     type Error: Debug;
     type ToPack;
     type ToUnpack;
@@ -19,15 +19,15 @@ pub trait ApiClient {
 }
 
 pub trait AbstractRequest<A>:
-    Request<<A as ApiClient>::ToPack, <A as ApiClient>::ToUnpack, <A as ApiClient>::Error>
+    Request<<A as Client>::ToPack, <A as Client>::ToUnpack, <A as Client>::Error>
 where
-    A: ApiClient,
+    A: Client,
 {
 }
 
 impl<T, A> AbstractRequest<A> for T
 where
-    A: ApiClient,
-    T: Request<<A as ApiClient>::ToPack, <A as ApiClient>::ToUnpack, <A as ApiClient>::Error>,
+    A: Client,
+    T: Request<<A as Client>::ToPack, <A as Client>::ToUnpack, <A as Client>::Error>,
 {
 }
