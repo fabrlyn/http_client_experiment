@@ -2,37 +2,48 @@ use std::fmt::Debug;
 
 use http_client_experiment::{
     api::{
+        self,
         asyn::Client,
         syn::{self, AbstractRequest},
+        Request,
     },
     domain::{
+        self,
         room_get::{RoomGetRequest, RoomGetResponse},
         room_post::RoomPostRequest,
         sync_client::ApiHttpClient,
-        ApiResult, RequestCredentials,
+        ApiResult, Error, RequestCredentials,
     },
+    http::{self, Response},
     http_impl::{mock_impl::MockClient, ureq_impl::Ureq},
 };
+use reqwest::blocking::ClientBuilder;
 
 fn something_else_more_specfic<A: syn::Client>(client: A)
 where
     RoomGetRequest: AbstractRequest<A, Response = ApiResult<RoomGetResponse>>,
 {
+    /*
     let response = client.api_execute(RoomGetRequest {}).unwrap();
     println!("{response:?}");
+    */
 }
 
 fn something_else<A: syn::Client>(client: A)
 where
     RoomGetRequest: AbstractRequest<A>,
 {
+    /*
     let response = client.api_execute(RoomGetRequest {}).unwrap();
     println!("{response:?}");
+    */
 }
 
 fn get_room<A: ApiHttpClient<E>, E: Debug>(client: &A) {
+    /*
     let response = client.api_execute(RoomGetRequest {});
     println!("{response:?}");
+    */
 }
 
 fn create_room<A: ApiHttpClient<E>, E: Debug>(client: &A) {
@@ -53,6 +64,29 @@ fn execute_room_flow<A: ApiHttpClient<E>, E: Debug>(client: A) {
     create_room(&client);
 }
 
+fn get_rooms<A, E>(client: &A) -> Result<ApiResult<Vec<RoomGetResponse>>, Error<E>>
+where
+    A: ApiHttpClient<E>,
+    E: Debug,
+{
+    client.api_execute(RoomGetRequest {
+        credentials: RequestCredentials {
+            base_url: format!("https://{}", std::env::var("HUE_IP").unwrap()),
+            username: std::env::var("HUE_USERNAME").unwrap(),
+        },
+    })
+}
+
+fn main() {
+    let client = ClientBuilder::new()
+        .danger_accept_invalid_certs(true)
+        .build()
+        .unwrap();
+
+    let rooms = get_rooms(&client);
+    println!("{rooms:?}");
+}
+
 /*
 fn main() {
     let client = Ureq {};
@@ -66,6 +100,7 @@ fn main() {
 }
 */
 
+/*
 #[tokio::main]
 async fn main() {
     let client = reqwest::Client::new();
@@ -73,3 +108,4 @@ async fn main() {
     let response = client.api_execute(RoomGetRequest).await;
     println!("{response:?}");
 }
+*/

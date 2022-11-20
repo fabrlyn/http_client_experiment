@@ -6,10 +6,12 @@ use crate::{
     http::{self, Method},
 };
 
-use super::{ApiResult, ClientError, Error};
+use super::{ApiResult, ClientError, Error, RequestCredentials};
 
 #[derive(Debug)]
-pub struct RoomGetRequest;
+pub struct RoomGetRequest {
+    pub credentials: RequestCredentials,
+}
 
 #[derive(Debug, Deserialize)]
 pub struct RoomGetResponse {
@@ -21,16 +23,19 @@ where
     E: Debug,
 {
     fn pack(self) -> Result<http::Request, Error<E>> {
+        let mut headers = HashMap::<String, String>::new();
+        headers.insert("hue-application-key".to_owned(), self.credentials.username);
+
         Ok(http::Request {
-            url: "".to_owned(),
+            url: format!("{}/clip/v2/resource/room", self.credentials.base_url),
             method: Method::Get,
-            headers: HashMap::new(),
+            headers,
             body: None,
         })
     }
 }
 
-impl<E> Unpack<http::Response, Error<E>> for ApiResult<RoomGetResponse>
+impl<E> Unpack<http::Response, Error<E>> for ApiResult<Vec<RoomGetResponse>>
 where
     E: Debug,
 {
@@ -59,5 +64,5 @@ impl<E> api::Request<http::Request, http::Response, Error<E>> for RoomGetRequest
 where
     E: Debug,
 {
-    type Response = ApiResult<RoomGetResponse>;
+    type Response = ApiResult<Vec<RoomGetResponse>>;
 }
